@@ -57,12 +57,12 @@ int init(void) {
 	event_queue = new_list();
 	query_list = new_list();
   
-  // Create the event_thread and the listen_thread
+	// Create the event_thread and the listen_thread
 	int iret = pthread_create( &event_thread, NULL, event_manager, (char *) "1");
-  int iret2 = pthread_create( &listen_thread, NULL, listener, (char *) "2");
+	int iret2 = pthread_create( &listen_thread, NULL, listener, (char *) "2");
   
-  // We start by thinking that there will be no error. But if there are, we
-  // simply set running to false and return
+	// We start by thinking that there will be no error. But if there are, we
+	// simply set running to false and return
 	if(iret + iret2 != 0) running = 0;
 
 	return iret + iret2; // Return error code
@@ -96,14 +96,12 @@ void* listener(void* id) {
 	int portno = 5037;
 	struct sockaddr_in serv_addr, cli_addr;
 
-  // Open a socket through which we'll be able to listen for clients
+	// Open a socket through which we'll be able to listen for clients
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     
 	if(sockfd < 0)
         printf("Server: ERROR opening the socket\n");
-  
-  // Set to zero
-//  memset((char *) serv_addr,'\0', sizeof(serv_addr));
+	
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(portno);
@@ -119,29 +117,29 @@ void* listener(void* id) {
 	//main loop listening
 	while(running) {
 		// Pre-allocate things so that we can deal with an incoming connection
-    // as quickly as possible
-    socklen_t clilen = sizeof(cli_addr);
+		// as quickly as possible
+		socklen_t clilen = sizeof(cli_addr);
     
-    // This will pause the execution of the loop until there's a connection
+		// This will pause the execution of the loop until there's a connection
 		listen(sockfd, 1);
 		// We accept the connection (accept returns an int)
 		int newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 		
-    if(newsockfd < 0) printf("Server: ERROR on accept");
+		if(newsockfd < 0) printf("Server: ERROR on accept");
         
 		printf("Server: New Socket accepted\n");
 		
-    int copy = newsockfd;
-    pthread_t sock_thread;
+		int copy = newsockfd;
+		pthread_t sock_thread;
 		int iret = pthread_create(&sock_thread, NULL, socket_thread, &copy);
     
-    if(iret != 0) printf("Error when creating socket_thread");
+		if(iret != 0) printf("Error when creating socket_thread");
 	}
 	printf("Server: Closing sockets...\n");
 
-  //closing sockets
+	//closing sockets
 	close(sockfd);
-  pthread_exit(NULL);
+	pthread_exit(NULL);
 }
 
 /**
@@ -153,26 +151,26 @@ void* listener(void* id) {
  *  @return unused
  */
 void* socket_thread(void* sock) {
-  // A little bit ugly, but we know it's a pointer so we copy in a local
-  // variable. This is to avoid problems if the listen_thread receives another
-  // incoming connection before this thread has time to use *sock, which will
-  // change as soon as there's a new connection.
-  int thread_id = *(int *)sock;
+	// A little bit ugly, but we know it's a pointer so we copy in a local
+	// variable. This is to avoid problems if the listen_thread receives another
+	// incoming connection before this thread has time to use *sock, which will
+	// change as soon as there's a new connection.
+	int thread_id = *(int *)sock;
   
-  // This is pretty bad practice too because it assumes the message won't be
-  // longer than 1000 characters. A better way to do this would be to send a
-  // first packet with an agreed upon size, containing the size of the
-  // upcoming packets of data
+	// This is pretty bad practice too because it assumes the message won't be
+	// longer than 1000 characters. A better way to do this would be to send a
+	// first packet with an agreed upon size, containing the size of the
+	// upcoming packets of data
 	int buffer_size = 1000;
 	
-  // Initialize the buffer and set it to 0
-  char *buffer = (char *) malloc(sizeof(char) * buffer_size);
-  memset((char *)buffer,'\0', sizeof(char) * buffer_size);
+	// Initialize the buffer and set it to 0
+	char *buffer = (char *) malloc(sizeof(char) * buffer_size);
+	memset((char *)buffer,'\0', sizeof(char) * buffer_size);
   
-  // This while loop is probably going to run only once. So if the client sends
-  // bigger messages, the server will only get a truncated version.
-  // The client's first packet should be an integer to define the size of the
-  // whole packet.
+	// This while loop is probably going to run only once. So if the client sends
+	// bigger messages, the server will only get a truncated version.
+	// The client's first packet should be an integer to define the size of the
+	// whole packet.
 	while(strlen(buffer) < 1){
 		recv(thread_id, buffer, buffer_size, 0);
 	}
@@ -181,11 +179,11 @@ void* socket_thread(void* sock) {
 	new_event->request = (char *)malloc(strlen(buffer)+1);
 	strcpy(new_event->request, buffer);
     
-  // We're done with buffer, we can free the memory
-  free(buffer);
+	// We're done with buffer, we can free the memory
+	free(buffer);
 	
-  add_element(new_event, event_queue);
-  pthread_exit(NULL);
+	add_element(new_event, event_queue);
+	pthread_exit(NULL);
 }
 
 /**
@@ -194,46 +192,51 @@ void* socket_thread(void* sock) {
  *
  *  @param id id of the thread
  *
- *  @return <#return value description#>
+ *  @return unused
  */
 void* event_manager(char* id) {
 	while(running) {
-    // This is to avoid clogging up the CPU, but it's definitely not a viable solution
-    // A better way to do that is to have the thread pause until there's a new element in the list
-    // That said, if there's only ever going to be one client sending requests, then this solution might perform better due to overhead of
-    // putting a thread to sleep or waking it up.
+		// This is to avoid clogging up the CPU, but it's definitely not a
+		// viable solution. A better way to do that is to have the thread pause
+		// until there's a new element in the list. That said, if there's only
+		// ever going to be one client sending requests, then this solution
+		// might perform better due to overhead of putting a thread to sleep or
+		// waking it up.
 		usleep(100);
-    // If the event_queue contains anything
+		
+		// If the event_queue contains anything
 		if(get_length(event_queue) > 0) {
-      // We get the first element
+			// We get the first element
 			struct Event *event = (struct Event *)get_element(0, event_queue);
 			
-      char* request = event->request;
+			char* request = event->request;
 			int socket = event->socket;
       
-      // We parse the query such that the first word will be the name of the
-      // function. The whole list will be passed as arguments to the function
+			// We parse the query such that the first word will be the name of
+			// the function. The whole list will be passed as arguments to the
+			// function.
 			struct LList *list = parse(request, " ");
 			printf("Request: %s\n", request);
       
-      // We now loop through our list of functions and find the one with the
-      // same name as the first element of the list list.
+			// We now loop through our list of functions and find the one with
+			// the same name as the first element of the list list.
 			for(int i = 0; i < get_length(query_list); i++) {
 				struct Query *query = (struct Query *)get_element(i, query_list);
 				
 				if(strcmp(query->query, (char *)get_element(0, list)) == 0) {
-          // We then call the function with the right name, passing as arguments
-          // the list containing the name of the function and any other data
-          // that we want.
+					// We then call the function with the right name, passing as
+					// arguments the list containing the name of the function
+					// and any other data that we want.
 					char* response = (((struct Query *)get_element(i, query_list))->func)(list);
 					printf("Found answer: %s\n", response);
           
-          // We then send the response back to the client.
+					// We then send the response back to the client.
 					send(socket, response, strlen(response), 0);
 				}
 			}
 			
-			shutdown(socket, 2); //close the transmission and reception for this socket
+			shutdown(socket, 2); // close the transmission and reception for
+								 // this socket
 			remove_element(0, event_queue);
 		}
 	}

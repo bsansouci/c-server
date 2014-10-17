@@ -17,12 +17,12 @@ int init(char* addr, int port){
 		return -1;
 	}
 	printf("Client: Done initializing\n");
+	
 	struct hostent *server = gethostbyname(addr);
 	if (server == NULL){
 		server = gethostbyaddr(addr, 4, AF_INET);
 		printf("Client: the server is null\n");
-		if(server == NULL)
-			return -1;
+		if(server == NULL) return -1;
 	}
   
   struct sockaddr_in serv_addr;
@@ -60,6 +60,6 @@ char *query(char *addr, int port, char *buffer, int buffer_size, int receive_siz
 	int sock = init(addr, port);
 	swrite(sock, buffer, buffer_size);
 	sread(sock, return_value, receive_size);
-  sclose(sock);
+	sclose(sock);
 	return return_value;
 }
