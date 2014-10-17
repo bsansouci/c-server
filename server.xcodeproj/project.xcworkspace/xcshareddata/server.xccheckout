@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>53CD60D0-9DD1-45AE-9A82-D2AE97F6153B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>server</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>8D426347504D137FED714638AF7EAD163021D7DF</key>
+		<string>http://github.com/bsansouci/c-server.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>server.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>8D426347504D137FED714638AF7EAD163021D7DF</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>http://github.com/bsansouci/c-server.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>8D426347504D137FED714638AF7EAD163021D7DF</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>8D426347504D137FED714638AF7EAD163021D7DF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>c-server</string>
+		</dict>
+	</array>
+</dict>
+</plist>
